@@ -16,11 +16,17 @@ const controlRecipes = async function () {
     // 2) Rendering recipe
     recipeView.render(model.state.recipe);
   } catch (err) {
-    alert(err);
+    recipeView.renderError();
   }
 };
 // window.addEventListener('hashchange', controlRecipes);
 // window.addEventListener('load', controlRecipes);
-['hashchange', 'load'].forEach(ev =>
-  window.addEventListener(ev, controlRecipes)
-);
+// equivalent to:
+// ['hashchange', 'load'].forEach(ev =>
+//   window.addEventListener(ev, controlRecipes)
+// );
+// Publisher-Subscriber pattern
+const init = function () {
+  recipeView.addHandlerRender(controlRecipes);
+};
+init();
