@@ -4,11 +4,15 @@ import { getJSON } from './helpers.js';
 
 export const state = {
   recipe: {},
+  search: {
+    query: '',
+    results: [],
+  },
 };
 //when this state object gets updated by loadRecipe, then it is also updated in the controller which imports the state
 export const loadRecipe = async function (id) {
   try {
-    const data = await getJSON(`${API_URL}/${id}`);
+    const data = await getJSON(`${API_URL}${id}`);
 
     const { recipe } = data.data;
     state.recipe = {
@@ -22,6 +26,29 @@ export const loadRecipe = async function (id) {
       ingredients: recipe.ingredients,
     };
     console.log(state.recipe);
+  } catch (err) {
+    console.log(`${err} ❌❌❌`);
+    throw err; // in order to be able to use it in the controller
+  }
+};
+
+// search functionality
+// the controller will tell this functions what it would search for
+export const loadSearchResults = async function (query) {
+  try {
+    state.search.query = query;
+
+    const data = await getJSON(`${API_URL}?search=${query}`);
+    console.log(data);
+
+    state.search.results = data.data.recipes.map(recipe => {
+      return {
+        id: recipe.id,
+        title: recipe.title,
+        publisher: recipe.publisher,
+        image: recipe.image_url,
+      };
+    });
   } catch (err) {
     console.log(`${err} ❌❌❌`);
     throw err;
